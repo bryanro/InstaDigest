@@ -12,7 +12,7 @@ var Scheduler = {};
 Scheduler.setupScheduler = function () {
     var cronJob = require('cron').CronJob;
     // TODO: CHANGE BACK TO 3am
-    var cronTime = '0 0 * * * *'; // occur every day at 3pm
+    var cronTime = '0 30 * * * *'; // occur every day at 3pm
     // TODO: GET CRONTIME FROM CONFIG IN DB
     logger.info('Setting schedule to the following cronTime: ' + cronTime, 'Scheduler');
     var sendTestDigest = new cronJob(cronTime, Scheduler.sendTestEmail, null, true);
