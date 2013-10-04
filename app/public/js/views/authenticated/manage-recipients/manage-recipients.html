@@ -1,0 +1,27 @@
+﻿<h1>Manage Recipients</h1>
+
+<div class="row">
+    <div class="col-xs-4">
+        <h4>Add Recipient Email Address</h4>
+        <form role="form" class="add-recipient-form">
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="email" class="form-control" id="add-recipient-email" placeholder="Enter email" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary add-recipient-submit"><i class="icon-plus"></i></button>
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-xs-4">
+        <h4>Existing Recipients</h4>
+        <ul class="list-group">
+            <% _.each(recipients.models, function (recipient) { %>
+                <li class="list-group-item recipient-list-item" id="recipient_<%=recipient.get('_id')%>"><%=recipient.get('email')%>
+                    <button class="btn btn-danger pull-right remove-recipient"><i class="icon-minus"></i></button>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+</div>

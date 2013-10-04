@@ -2,17 +2,17 @@
     development: {
         mongoConn: 'mongodb://localhost/instadigest',
         verbosityLevel: 'debug',
-        cookieExpiration: 86400000 * 30     // 30 days
+        sessionExpiration: 86400000 * 30    // 30 days
     },
     beta: {
         mongoConn: process.env.OPENSHIFT_MONGODB_DB_URL + 'instadigest',
         verbosityLevel: 'debug',
-        cookieExpiration: 86400000 * 30     // 30 days
+        sessionExpiration: 86400000 * 10    // 10 days
     },
     production: {
         mongoConn: process.env.OPENSHIFT_MONGODB_DB_URL + 'instadigest',
         verbosityLevel: 'warn',
-        cookieExpiration: 86400000 * 30     // 30 days
+        sessionExpiration: 86400000 * 10    // 10 days
     }
 }
 

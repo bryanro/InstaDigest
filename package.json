@@ -1,0 +1,32 @@
+﻿{
+	"name": "instadigest",
+	"version": "0.1.0",
+	"description": "Instagram Daily Digest",
+	"author": {
+		"name": "Bryan Rosenbaum",
+		"email": "bryan.rosenbaum@gmail.com"
+	},
+	"website":{
+		"url": "prod-instadigest.rhcloud.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/bryanro/instadigest"
+	},
+	"private": false,
+	"dependencies": {
+		"express":			"latest",
+		"bcrypt":			"latest",
+		"fs.extra":			"latest",
+		"mongodb":			"latest",
+		"moment":			"latest",
+		"mongoose":			"latest",
+		"underscore":		"latest",
+		"connect-mongo":	"latest",
+		"instagram-node":	"latest"
+	},
+	"engines": {
+		"node":			"latest",
+		"npm":			"latest"
+	}
+}

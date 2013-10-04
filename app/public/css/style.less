@@ -1,0 +1,32 @@
+﻿@import "css/bootstrap-3.0.0.css";
+@import "css/font-awesome-3.0.css";
+
+@default-font: 'Source Sans Pro', serif;
+
+body {
+    font-family: @default-font;
+    font-size: 16px;
+    padding-top: 50px;
+}
+
+.remove-recipient {
+    margin-top: -6px;
+    margin-right: -12px;
+    border-radius: 0;
+}
+
+.list-group-item:first-child .remove-recipient {
+    border-top-right-radius: 4px;
+}
+
+.list-group-item:last-child .remove-recipient {
+    border-bottom-right-radius: 4px;
+}
+
+.recipient-list-item {
+    padding: 6px 12px;
+}
+
+
+/* Bootstrap Overrides */
+

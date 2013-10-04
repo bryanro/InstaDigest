@@ -1,0 +1,17 @@
+<div class="container" style="text-align:center;">
+    <div style="margin: 20px auto;">
+        <% if (medias.length === 1) { %>
+            <span style="font-size: 20px;">1 picture from <%=user.fullName%></span>
+        <% } else { %>
+            <span><%=medias.length%> pictures from <%=user.fullName%></span>
+        <% } %>
+    </div>
+    <% _.each(medias, function (media) { %>
+        <div class="image-container" style="margin: 8px auto;">
+            <a href="<%=media.images.standard_resolution.url%>" title="<%=media.caption.text%>"><img src="<%=media.images.standard_resolution.url%>" /></a>
+        </div>
+        <div style="color: #666666;">
+            <span style="font-size: 16px;"><%=media.caption.text%></span>
+        </div>
+    <% }); %>
+</div>
