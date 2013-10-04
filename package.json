@@ -16,7 +16,6 @@
 	"private": false,
 	"dependencies": {
 		"express":			"latest",
-		"bcrypt":			"latest",
 		"fs.extra":			"latest",
 		"mongodb":			"latest",
 		"moment":			"latest",
