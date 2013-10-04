@@ -23,7 +23,8 @@
 		"underscore":		"latest",
 		"connect-mongo":	"latest",
 		"instagram-node":	"latest",
-		"nodemailer":		"latest"
+		"nodemailer":		"latest",
+		"cron":				"latest"
 	},
 	"engines": {
 		"node":			"latest",
