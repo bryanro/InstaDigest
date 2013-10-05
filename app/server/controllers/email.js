@@ -40,9 +40,11 @@ Email.sendDigest = function (user, recipient, medias, callback) {
     Email.smtpTransport.sendMail(Email.config.mailOptions, function (err, response) {
         if (err) {
             logger.error('Error: ' + err, 'sendDigest', user.instagramUsername);
+            callback(err);
         }
         else {
             logger.debug('Successfully sent email: ' + response.message, 'sendDigest', user.instagramUsername);
+            callback(null);
         }
     });
 }

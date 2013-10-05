@@ -104,15 +104,15 @@ InstagramController.getNewPicturesForUser = function (user, lastEmailAttemptTime
     instagram.use({ access_token: user.instagramOauthToken });
     instagram.user_media_recent(user.instagramId, { min_timestamp: lastEmailAttemptTimestamp }, function (err, medias, pagination, limit) {
         if (err) {
-            console.log('Error getting recent media from instagram: ' + err, 'getNewPicturesForUser', 'user.instagramUsername');
+            console.log('Error getting recent media from instagram: ' + err, 'getNewPicturesForUser', user.instagramUsername);
             callback(err);
         }
         else {
-            logger.debug('Found ' + medias.length + 'media items', 'getNewPicturesForUser', 'user.instagramUsername');
-            logger.debug('Limit is at: ' + limit, 'getNewPicturesForUser', 'user.instagramUsername');
-            /*console.log('MEDIAS: ' + JSON.stringify(medias));
-            console.log('PAGINATION: ' + JSON.stringify(pagination));
-            console.log('LIMIT: ' + JSON.stringify(limit));*/
+            logger.debug('Found ' + medias.length + ' media items', 'getNewPicturesForUser', user.instagramUsername);
+            logger.debug('Limit is at: ' + limit, 'getNewPicturesForUser', user.instagramUsername);
+            /*logger.debug('MEDIAS: ' + JSON.stringify(medias), 'getNewPicturesForUser', user.instagramUsername);
+            logger.debug('PAGINATION: ' + JSON.stringify(pagination), 'getNewPicturesForUser', user.instagramUsername);
+            logger.debug('LIMIT: ' + JSON.stringify(limit), 'getNewPicturesForUser', user.instagramUsername);*/
 
             callback(err, medias);
         }
