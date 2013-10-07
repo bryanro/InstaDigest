@@ -24,7 +24,8 @@
 		"connect-mongo":	"latest",
 		"instagram-node":	"latest",
 		"nodemailer":		"latest",
-		"cron":				"latest"
+		"cron":				"latest",
+		"jquery":			"latest"
 	},
 	"engines": {
 		"node":			"latest",

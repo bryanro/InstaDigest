@@ -8,8 +8,9 @@
   'views/authenticated/manage-recipients/manage-recipients.view',
   'views/unauthenticated/header-unauthenticated.view',
   'views/unauthenticated/unauthenticated.view',
-  'views/authenticated/authenticated.view'
-], function ($, _, Backbone, UserModel, RecipientsCollection, AuthenticatedHeaderView, ManageRecipientsView, UnauthenticatedHeaderView, UnauthenticatedView, AuthenticatedView) {
+  'views/authenticated/authenticated.view',
+  'views/unauthenticated/authentication-error/authentication-error'
+], function ($, _, Backbone, UserModel, RecipientsCollection, AuthenticatedHeaderView, ManageRecipientsView, UnauthenticatedHeaderView, UnauthenticatedView, AuthenticatedView, AuthenticationErrorView) {
 
     var thisRouter;
 
@@ -21,6 +22,7 @@
         routes: {
             // Define some URL routes
             'login': 'showUnauthenticated',
+            'auth-error': 'showAuthenticationError',
 
             // Default
             '*actions': 'showAuthenticated'
@@ -29,6 +31,13 @@
         showUnauthenticated: function () {
             this.unauthenticatedView = new UnauthenticatedView();
             this.unauthenticatedView.render();
+            this.unauthenticatedHeaderView = new UnauthenticatedHeaderView({});
+            this.unauthenticatedHeaderView.render();
+        },
+
+        showAuthenticationError: function () {
+            this.authenticationErrorView = new AuthenticationErrorView();
+            this.authenticationErrorView.render();
             this.unauthenticatedHeaderView = new UnauthenticatedHeaderView({});
             this.unauthenticatedHeaderView.render();
         },

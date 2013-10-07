@@ -4,6 +4,7 @@ var instagram = require('instagram-node').instagram();
 var Config = require('./config');
 var User = require('./user');
 var moment = require('moment');
+var $ = require('jquery');
 
 var InstagramController = {};
 
@@ -49,42 +50,62 @@ InstagramController.initialize = function () {
             InstagramController.config.instagramClientSecret = instagramClientSecret;
         }
     });
+
+    Config.getConfigValue('betaPassword', function (err, betaPassword) {
+        if (err) {
+            logger.error('Error getting betaPassword.', 'instagram initialize');
+        }
+        else if (!betaPassword) {
+            logger.error('Error finding betaPassword.', 'instagram initialize');
+        }
+        else {
+            logger.debug('Success finding betaPassword', 'instagram initialize');
+            InstagramController.config.betaPassword = betaPassword;
+        }
+    });
 }
 
 InstagramController.authenticate = function (req, res) {
-    instagram.use({
-        client_id: InstagramController.config.instagramClientId,
-        client_secret: InstagramController.config.instagramClientSecret
-    });
+    logger.debug('Entering instagram.authenticate()', 'instagram.authenticate');
 
-    res.redirect(instagram.get_authorization_url(InstagramController.config.instagramRedirectUri));
+    var buildAuthUrl = 'https://api.instagram.com/oauth/authorize/?client_id=';
+    buildAuthUrl += InstagramController.config.instagramClientId;
+    buildAuthUrl += '&redirect_uri=';
+    buildAuthUrl += InstagramController.config.instagramRedirectUri;
+    buildAuthUrl += '&response_type=code';
+
+    res.redirect(buildAuthUrl);
 }
 
 InstagramController.authRedirect = function (req, res) {
+    logger.debug('Entering authRedirect()', 'authRedirect');
 
-    instagram.authorize_user(req.query.code, InstagramController.config.instagramRedirectUri, function (err, result) {
-        if (err) {
-            logger.error('Error with authorizing user: ' + err.body, 'authRedirect');
-            // TODO: FIX THIS
-            res.send('Error authorizing user: ' + err.body);
-        } else {
-            logger.debug('Successfully got access token.', 'authRedirect');
-            //res.send('You made it!! ' + result.access_token);
+    var authCode = req.query.code;
+    $.ajax({
+        type: 'POST',
+        url: 'https://api.instagram.com/oauth/access_token',
+        data: {
+            client_id: InstagramController.config.instagramClientId,
+            client_secret: InstagramController.config.instagramClientSecret,
+            grant_type: 'authorization_code',
+            redirect_uri: InstagramController.config.instagramRedirectUri,
+            code: authCode
+        },
+        success: function (data, status, xhr) {
+            logger.debug('Success posting access_token', 'authRedirect');
 
             // save new user or update user's oauth token
             var newUserParams = {
-                instagramOauthToken: result.access_token,
-                instagramUsername: result.user.username,
-                fullName: result.user.full_name,
-                instagramId: result.user.id,
-                instagramProfilePictureUrl: result.user.profile_picture
+                instagramOauthToken: data.access_token,
+                instagramUsername: data.user.username,
+                fullName: data.user.full_name,
+                instagramId: data.user.id,
+                instagramProfilePictureUrl: data.user.profile_picture
             };
 
             User.createOrUpdateUser(newUserParams, function (err, user) {
                 if (err) {
                     logger.error('Error creating or updating new user: ' + err, 'authRedirect', result.user.username);
-                    // TODO: FIX THIS
-                    //res.send('Error creating or updating user.');
                     res.redirect('/');
                 }
                 else {
@@ -94,6 +115,15 @@ InstagramController.authRedirect = function (req, res) {
                     res.redirect('/');
                 }
             });
+        },
+        error: function (xhr, status, error) {
+            if (xhr && xhr.responseText && xhr.responseText.error_message) {
+                logger.error('Error posting access_token: ' + xhr.responseText.error_message, 'authRedirect');
+            }
+            else {
+                logger.error('Error posting access_token, xhr: ' + JSON.stringify(xhr), 'authRedirect');
+            }
+            res.redirect('/#auth-error');
         }
     });
 }
