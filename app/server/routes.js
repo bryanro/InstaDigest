@@ -29,6 +29,7 @@ module.exports = function (app) {
     // TEMP FOR TESTING
     app.get('/email', function (req, res) {
         var _ = require('underscore');
+
         var medias = [
             {
                 "attribution": null,
@@ -184,6 +185,43 @@ module.exports = function (app) {
     /* User */
     var user = require('./controllers/user');
     app.get('/user', user.getUser);
+
+    app.get('/preview-email', function (req, res) {
+        var _ = require('underscore');
+        var UserController = require('./controllers/user');
+        UserController.getInstagramUsernameFromSession(req, function (err, instagramUsername) {
+            if (err) {
+                logger.error('Error getting instagram username from session', 'previewEmail');
+                res.send(500, 'Error getting instagram username from session');
+            }
+            else {
+                logger.debug('Successfully got instagramUsername', 'previewEmail', instagramUsername);
+                UserController.getUserInfo(instagramUsername, function (err, user) {
+                    if (err) {
+                        logger.error('Error getting user info: ' + err, 'previewEmail', instagramUsername);
+                        res.send(500, 'Error getting user info');
+                    }
+                    else {
+                        var InstagramController = require('./controllers/instagram');
+                        InstagramController.getNewPicturesForUser(user, user.lastEmailAttemptDate, function (err, medias) {
+                            if (err) {
+                                logger.error('Error getting new pictures for user: ' + err, 'previewEmail', instagramUsername);
+                                res.send(500, 'Error getting new pictures for user');
+                            }
+                            else {
+                                logger.debug('Successfully got ' + medias.length + ' new picture(s) for user', 'previewEmail', instagramUsername);
+                                var fs = require('fs');
+                                var EmailController = require('./controllers/email');
+                                var digestTemplate = _.template(EmailController.config.mailOptions.digestTemplate);
+                                var digestTemplateText = digestTemplate({ medias: medias, user: user });
+                                res.send(200, digestTemplateText);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
 
     /* Recipient */
     

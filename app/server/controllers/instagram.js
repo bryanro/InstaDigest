@@ -144,7 +144,7 @@ InstagramController.getNewPicturesForUser = function (user, lastEmailAttemptTime
             logger.debug('PAGINATION: ' + JSON.stringify(pagination), 'getNewPicturesForUser', user.instagramUsername);
             logger.debug('LIMIT: ' + JSON.stringify(limit), 'getNewPicturesForUser', user.instagramUsername);*/
 
-            callback(err, medias);
+            callback(null, medias);
         }
     });
 }

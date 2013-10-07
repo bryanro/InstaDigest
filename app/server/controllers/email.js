@@ -36,7 +36,7 @@ Email.sendDigest = function (user, recipient, medias, callback) {
     Email.config.mailOptions.html = digestTemplate({ user: user, medias: medias });
     // TODO: FIX
     Email.config.mailOptions.text = '';
-    
+
     Email.smtpTransport.sendMail(Email.config.mailOptions, function (err, response) {
         if (err) {
             logger.error('Error: ' + err, 'sendDigest', user.instagramUsername);
