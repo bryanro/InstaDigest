@@ -62,9 +62,9 @@ paste the following to the post-receive file and save it:
     # change directory
     cd ~/instadigest
     
-    # list current directory
-    pwd
-    
+    # unset the git directory so git pull will work
+    unset GIT_DIR
+
     # pull latest from bare
     git pull
     
