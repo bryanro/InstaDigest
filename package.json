@@ -1,34 +1,45 @@
-﻿{
-	"name": "instadigest",
-	"version": "0.1.0",
-	"description": "Instagram Daily Digest",
-	"author": {
-		"name": "Bryan Rosenbaum",
-		"email": "bryan.rosenbaum@gmail.com"
-	},
-	"website":{
-		"url": "prod-instadigest.rhcloud.com"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/bryanro/instadigest"
-	},
-	"private": false,
-	"dependencies": {
-		"express":			"latest",
-		"fs.extra":			"latest",
-		"mongodb":			"latest",
-		"moment":			"latest",
-		"mongoose":			"latest",
-		"underscore":		"latest",
-		"connect-mongo":	"latest",
-		"instagram-node":	"latest",
-		"nodemailer":		"latest",
-		"cron":				"latest",
-		"jquery":			"latest"
-	},
-	"engines": {
-		"node":			"latest",
-		"npm":			"latest"
-	}
+{
+  "name": "instadigest",
+  "version": "2.0.0",
+  "description": "Email daily digest of instagrams",
+  "main": "server.js",
+  "dependencies": {
+    "async": "^1.4.2",
+    "body-parser": "^1.13.3",
+    "cookie-parser": "^1.3.5",
+    "cron": "^1.0.9",
+    "express": "^4.13.3",
+    "forever": "^0.15.1",
+    "instagram-node": "^0.5.8",
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
+    "morgan": "^1.6.1",
+    "nodemailer": "^1.4.0",
+    "path": "^0.11.14",
+    "restler": "^3.3.0",
+    "winston": "^1.0.1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=0.10.3 <=0.12"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bryanro/InstaDigest.git"
+  },
+  "keywords": [
+    "instagram",
+    "daily",
+    "digest"
+  ],
+  "author": "Bryan Rosenbaum",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bryanro/InstaDigest/issues"
+  },
+  "homepage": "https://github.com/bryanro/InstaDigest"
 }

@@ -1,0 +1,14 @@
+﻿module.exports = {
+    port: 3000,
+    sendEmailSchedule: '0 0 9 * * *', // occur every day at 9am UTC
+    senderEmail: {
+        emailAccountAddress: 'foobar@gmail.com',
+        emailPassword: 'foobar',
+    },
+    instagramApi: {
+        instagramClientSecret: 'secret',
+        instagramClientId: 'clientid',
+        instagramRedirectUri: 'http://myserver/auth/instagram/auth-redirect'
+    },
+    loggingVerbosity: 'debug'
+}

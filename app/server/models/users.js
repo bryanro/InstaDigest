@@ -1,4 +1,21 @@
-﻿var mongoose = require('mongoose');
+﻿var logger = require('winston');
+var _ = require('lodash');
+
+var userConfig = require('../config/instagramusers.json');
+
+var UserModel = {};
+
+UserModel.getUsers = function () {
+    return userConfig;
+}
+
+UserModel.getUser = function (username) {
+    return _.findWhere(UserModel.getUsers(), { instagramUsername: username });
+}
+
+module.exports = UserModel;
+
+/*var mongoose = require('mongoose');
 var logger = require('../modules/logger');
 
 var UserSchema = new mongoose.Schema({
@@ -13,22 +30,6 @@ var UserSchema = new mongoose.Schema({
     lastEmailAttemptDate: { type: Date },
     lastEmailSuccessfullySentDate: { type: Date }
 });
-
-/*UserSchema.pre('save', function (next) {
-    var user = this;
-
-    user.lastUpdatedDate = Date.now();
-    user.save(function (err, savedUser) {
-        if (err) {
-            logger.error('Error pre-saving user: ' + err, 'UserSchema.pre(save)', user.instagramUsername);
-            next(err);
-        }
-        else {
-            logger.debug('Successfully updated lastUpdateDateTime for user', 'UserSchema.pre(save)', user.instagramUsername);
-            next();
-        }
-    });
-});*/
 
 UserSchema.methods.updateInstagramOauthToken = function (newOauthToken, callback) {
     var user = this;
@@ -64,3 +65,4 @@ UserSchema.methods.updatelastEmailAttempt = function (newLastEmailAttempt, callb
 mongoose.model('User', UserSchema);
 
 logger.debug('users.js model loaded', 'users.js');
+    */
