@@ -13,8 +13,7 @@ router.get('/:username/latest', function (req, res, next) {
         res.status(404).send('User not found');
     }
     else {
-        var yesterdayTimestamp = moment('2015-08-15').subtract(1, 'days').format('X');
-        //var yesterdayTimestamp = moment().subtract(1, 'days').format('X');
+        var yesterdayTimestamp = moment().subtract(1, 'days').format('X');
         instagramController.getNewPicturesForUser(foundUser, yesterdayTimestamp, function (err, media) {
             if (err) {
                 res.status(500).send(err);
