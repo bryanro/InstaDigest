@@ -28,7 +28,7 @@ SchedulerController.sendDigestEmails = function (callback) {
 
     emailController.openSmtpTransport();
 
-    var lastEmailSent = SchedulerController.lastEmailSent || moment().subtract(15, 'days');
+    var lastEmailSent = SchedulerController.lastEmailSent || moment().subtract(1, 'days');
     logger.info('processing emails with lastEmailSent: ' + lastEmailSent.format('YYYY-MM-DD hh:mm a'));
 
     SchedulerController.lastEmailSent = moment();
