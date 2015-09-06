@@ -78,5 +78,14 @@ paste the following to the post-receive file and save it:
             -l ~/logs/instadigest/forever.log \
             -o ~/logs/instadigest/out.log \
             -e ~/logs/instadigest/err.log \
-            ~/instadigest/server.js
+            --sourceDir ~/instadigest \
+            server.js
 
+## Gmail Issues
+
+If you are a login failure (response code 534) and you've verified your username and password are correct, google may be blocking the request from the new source. To resolve, login to the gmail account and go into the email that says they have blocked the request, then mark that as a known device. Restart the server and it should send emails successfully after that.
+
+Other things that may be required while logged into the gmail account:
+
+1. [https://www.google.com/settings/security/lesssecureapps](https://www.google.com/settings/security/lesssecureapps)
+2. [http://www.google.com/accounts/DisplayUnlockCaptcha](http://www.google.com/accounts/DisplayUnlockCaptcha)
