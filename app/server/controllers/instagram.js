@@ -1,4 +1,6 @@
-﻿var instagram = require('instagram-node').instagram();
+﻿var _ = require('lodash');
+var async = require('async');
+var instagram = require('instagram-node').instagram();
 var logger = require('winston');
 var moment = require('moment');
 var rest = require('restler');
@@ -47,16 +49,69 @@ InstagramController.authRedirect = function (req, res, next) {
     });
 }
 
-InstagramController.getNewPicturesForUser = function (user, fromTimestamp, callback) {
+InstagramController.getPicturesForUserFromMoment = function (user, fromMoment, callback) {
+    // default to 1 day later
+    var toMoment = moment(fromMoment).add(1, 'days');
+    InstagramController.getPicturesForUserFromMomentToMoment(user, fromMoment, toMoment, callback);
+}
+
+InstagramController.getPicturesForUserFromMoment = function (user, fromMoment, callback) {
+    // default to 1 day later
+    var toMoment = moment(fromMoment).add(1, 'days');
+    InstagramController.getPicturesForUserFromMomentToMoment(user, fromMoment, toMoment, callback);
+}
+
+InstagramController.getPicturesForUserFromMomentToMoment = function (user, fromMoment, toMoment, callback) {
+    var fromTimestamp = moment(fromMoment).format('X');
+    var toTimestamp = moment(toMoment).format('X');
+    logger.debug('getPicturesForUserFromMomentToMoment - fromTimestamp: ' + fromTimestamp + ' (' + moment(fromMoment).toISOString() + ') - toTimestamp: ' + toTimestamp + ' (' + moment(toMoment).toISOString() + ')');
     instagram.use({ access_token: user.instagramOauthToken });
-    instagram.user_media_recent(user.instagramId, { min_timestamp: fromTimestamp }, function (err, medias, pagination, limit) {
+    instagram.user_media_recent(user.instagramId, { min_timestamp: fromTimestamp, max_timestamp: toTimestamp }, function (err, medias, pagination, limit) {
         if (err) {
             logger.error('error getting recent media from instagram: ' + err);
             callback(err);
         }
         else {
             logger.info('found ' + medias.length + ' media items for ' + user.instagramUsername);
-            logger.debug('limit is at: ' + limit, 'getNewPicturesForUser', user.instagramUsername);
+            logger.debug('limit is at: ' + limit, 'getPicturesForUser', user.instagramUsername);
+            callback(null, medias);
+        }
+    });
+}
+
+InstagramController.getHistoricalPicturesForWeek = function (user, dateMoment, callback) {
+    var month = moment(dateMoment).month();
+    var day = moment(dateMoment).date();
+
+    // start with this year
+    var year = moment().year();
+
+    var medias = [];
+
+    async.whilst(function () {
+        return config.weeklyDigest && config.weeklyDigest.enabled && year >= config.weeklyDigest.minYear;
+    }, function (asyncCallback) {
+        logger.debug('iteration: ' + year);
+        var weekStartInPast = moment([year, month, day]);
+        var weekEndInPast = moment(weekStartInPast).add(1, 'weeks');
+        InstagramController.getPicturesForUserFromMomentToMoment(user, weekStartInPast, weekEndInPast, function (err, media) {
+            if (err) {
+                asyncCallback(err);
+            }
+            else {
+                if (media.length > 0) {
+                    media.year = year;
+                    medias.push(media);
+                }
+                year--;
+                asyncCallback(null);
+            }
+        });
+    }, function (whilstErr) {
+        if (whilstErr) {
+            callback(whilstErr);
+        }
+        else {
             callback(null, medias);
         }
     });

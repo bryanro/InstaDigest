@@ -1,0 +1,22 @@
+<div class="container" style="text-align:center;">
+    <div style="font-size:24px;font-weight:bold;">This Week in Years Past</div>
+    <% _.each(medias, function (mediaForYear) { %>
+        <div style="clear:left;font-size:20px;"><%=mediaForYear.year%></div>
+        <div>
+        <% _.each(mediaForYear, function (media) { %>
+            <% if (!media.caption) { media.caption = { text: '' }; } %>
+            <div style="display:inline-block; vertical-align:top; width:160px; margin-bottom: 6px;">
+                <div class="image-container" style="margin: 8px auto;">
+                    <a href="<%=media.images.standard_resolution.url%>" title="<%=media.caption.text || ''%>"><img src="<%=media.images.thumbnail.url%>" /></a>
+                </div>
+                <div style="color: #666666; margin-bottom: 8px;">
+                    <% if (media.caption) { %>
+                        <span style="font-size: 16px;"><%=media.caption.text%></span>
+                    <% } %>
+                </div>
+            </div>
+        <% }); %>
+        </div>
+        <hr style="clear:left;"/>
+    <% }); %>
+</div>

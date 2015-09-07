@@ -5,8 +5,19 @@ var router = express.Router();
 
 var schedulerController = require('../controllers/scheduler');
 
-router.post('/manual', function (req, res, next) {
-    schedulerController.sendDigestEmails(function (err, stats) {
+router.post('/daily', function (req, res, next) {
+    schedulerController.sendDailyDigestEmails(function (err, stats) {
+        if (err) {
+            res.status(500).send(err);
+        }
+        else {
+            res.status(200).send(stats);
+        }
+    });
+});
+
+router.post('/weekly', function (req, res, next) {
+    schedulerController.sendWeeklyDigestEmails(function (err, stats) {
         if (err) {
             res.status(500).send(err);
         }
