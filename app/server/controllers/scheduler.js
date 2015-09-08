@@ -15,13 +15,10 @@ SchedulerController.initializeScheduler = function () {
     var dailyCronDateTime = config.dailyEmailSchedule || '0 0 5 * * *'; // occur every day at 5am by default
     var weeklyCronDateTime = config.weeklyEmailSchedule || '0 0 5 * * 1'; // occur every week on Mondays at 5am
 
-    SchedulerController.lastEmailSent = moment().subtract(1, 'days').startOf('day');
-    logger.info('setting lastEmailSent to: ' + SchedulerController.lastEmailSent.format('YYYY-MM-DD hh:mm a'));
-
-    logger.info('setting daily schedule to cronDateTime: ' + dailyCronDateTime);
+    logger.info('setting DAILY schedule to cronDateTime: ' + dailyCronDateTime);
     var sendDailyDigest = new cronJob(dailyCronDateTime, SchedulerController.sendDailyDigestEmails, null, true, 'America/New_York');
 
-    logger.info('setting weekly schedule to cronDateTime: ' + weeklyCronDateTime);
+    logger.info('setting WEEKLY schedule to cronDateTime: ' + weeklyCronDateTime);
     var sendWeeklyDigest = new cronJob(weeklyCronDateTime, SchedulerController.sendWeeklyDigestEmails, null, true, 'America/New_York');
 }
 
@@ -33,10 +30,8 @@ SchedulerController.sendDailyDigestEmails = function (callback) {
 
     emailController.openSmtpTransport();
 
-    var lastEmailSent = SchedulerController.lastEmailSent || moment().subtract(1, 'days').startOf('day');
-    logger.info('processing emails with lastEmailSent: ' + lastEmailSent.format('YYYY-MM-DD hh:mm a'));
-
-    SchedulerController.lastEmailSent = moment();
+    var startOfYesterday = moment().subtract(7, 'days').startOf('isoweek');
+    logger.info('processing weekly with start of yesterda: ' + startOfYesterday.format('YYYY-MM-DD hh:mm a'));
 
     var stats = {
         numEmailsSent: 0,
@@ -48,7 +43,7 @@ SchedulerController.sendDailyDigestEmails = function (callback) {
     async.eachSeries(users, function (user, userSeriesCallback) {
         async.waterfall([
             function (asyncCallback) {
-                instagramController.getPicturesForUserFromMoment(user, lastEmailSent, asyncCallback);
+                instagramController.getPicturesForUserFromMoment(user, startOfYesterday, asyncCallback);
             },
             function (medias, asyncCallback) {
                 if (medias.length < 1) {
