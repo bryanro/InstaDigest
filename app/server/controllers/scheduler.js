@@ -30,8 +30,8 @@ SchedulerController.sendDailyDigestEmails = function (callback) {
 
     emailController.openSmtpTransport();
 
-    var startOfYesterday = moment().subtract(7, 'days').startOf('isoweek');
-    logger.info('processing weekly with start of yesterda: ' + startOfYesterday.format('YYYY-MM-DD hh:mm a'));
+    var startOfYesterday = moment().subtract(1, 'days').startOf('day');
+    logger.info('processing daily with start of yesterday: ' + startOfYesterday.format('YYYY-MM-DD hh:mm a'));
 
     var stats = {
         numEmailsSent: 0,
