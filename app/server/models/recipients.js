@@ -14,11 +14,11 @@ RecipientModel.getRecipient = function (email) {
 }
 
 RecipientModel.getDailyDigestRecipients = function () {
-    return _.findWhere(RecipientModel.getRecipients(), { dailyDigest: true });
+    return _.where(RecipientModel.getRecipients(), { dailyDigest: true });
 }
 
 RecipientModel.getWeeklyDigestRecipients = function () {
-    return _.findWhere(RecipientModel.getRecipients(), { weeklyDigest: true });
+    return _.where(RecipientModel.getRecipients(), { weeklyDigest: true });
 }
 
 module.exports = RecipientModel;

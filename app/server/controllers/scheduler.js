@@ -76,7 +76,7 @@ SchedulerController.sendDailyDigestEmails = function (callback) {
         function (medias, asyncCallback) {
             logger.debug('found ' + medias.length + ' total medias');
 
-            var recipients = recipientsModel.getRecipients();
+            var recipients = recipientsModel.getDailyDigestRecipients();
             logger.debug('recipients: ' + JSON.stringify(recipients));
             async.eachSeries(recipients, function (recipient, recipientSeriesCallback) {
                 // filter medias to send only to the recipients' instagram users
@@ -142,7 +142,7 @@ SchedulerController.sendWeeklyDigestEmails = function (callback) {
 
              */
 
-            var recipients = recipientsModel.getRecipients();
+            var recipients = recipientsModel.getWeeklyDigestRecipients();
             logger.debug('recipients: ' + JSON.stringify(recipients));
             async.eachSeries(recipients, function (recipient, recipientSeriesCallback) {
                 // filter medias to send only to the recipients' instagram users
