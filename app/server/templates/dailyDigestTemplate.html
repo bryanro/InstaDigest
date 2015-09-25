@@ -1,9 +1,9 @@
 <div class="container" style="text-align:center;">
     <div style="margin: 20px auto;">
         <% if (medias.length === 1) { %>
-            <span style="font-size: 20px;">1 picture from <%=user.fullName%></span>
+            <span style="font-size: 20px;">1 new picture</span>
         <% } else { %>
-            <span><%=medias.length%> pictures from <%=user.fullName%></span>
+            <span><%=medias.length%> new pictures</span>
         <% } %>
     </div>
     <% _.each(medias, function (media) { %>

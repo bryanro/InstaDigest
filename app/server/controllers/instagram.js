@@ -73,13 +73,35 @@ InstagramController.getPicturesForUserFromMomentToMoment = function (user, fromM
         }
         else {
             logger.info('found ' + medias.length + ' media items for ' + user.instagramUsername);
-            logger.debug('limit is at: ' + limit, 'getPicturesForUser', user.instagramUsername);
+            logger.debug('limit is at: ' + limit + ' for ' + user.instagramUsername);
             callback(null, medias);
         }
     });
 }
 
-InstagramController.getHistoricalPicturesForWeek = function (user, dateMoment, callback) {
+InstagramController.getHistoricalPicturesForWeekForUsers = function (users, dateMoment, callback) {
+    var medias = [];
+
+    async.each(users, function (user, asyncCallback) {
+        InstagramController.getHistoricalPicturesForWeekForUser(user, dateMoment, function (err, media) {
+            if (err) {
+                asyncCallback(err);
+            }
+            else {
+                if (media.length > 0) {
+                    _.each(media, function (m) {
+                        medias.push(m);
+                    });
+                }
+                asyncCallback(null);
+            }
+        });
+    }, function (asyncErr) {
+        callback(asyncErr, medias);
+    });
+}
+
+InstagramController.getHistoricalPicturesForWeekForUser = function (user, dateMoment, callback) {
     var month = moment(dateMoment).month();
     var day = moment(dateMoment).date();
 
@@ -100,8 +122,12 @@ InstagramController.getHistoricalPicturesForWeek = function (user, dateMoment, c
             }
             else {
                 if (media.length > 0) {
-                    media.year = year;
-                    medias.push(media);
+                    var m = {
+                        instagramUsername: user.instagramUsername,
+                        year: year,
+                        medias: media
+                    };
+                    medias.push(m);
                 }
                 year--;
                 asyncCallback(null);
@@ -115,6 +141,45 @@ InstagramController.getHistoricalPicturesForWeek = function (user, dateMoment, c
             callback(null, medias);
         }
     });
+}
+
+InstagramController.consolidateMediaByYear = function (medias) {
+    // group all instagram users' together for each year
+    var yearsToProcess = _.chain(medias)
+        .pluck('year')
+        .uniq()
+        .sortBy(function (val) {
+            return val;
+        })
+        .value();
+
+    var filteredMediasByYear = [];
+    _.each(yearsToProcess, function (eachYear) {
+        var yearMedias = {
+            year: eachYear,
+            medias: []
+        };
+        _.each(medias, function (fm) {
+            if (fm.year == eachYear) {
+                _.each(fm.medias, function (m) {
+                    yearMedias.medias.push(m);
+                });
+            }
+        });
+        filteredMediasByYear.push(yearMedias);
+    });
+
+    // sort filteredMediasByYear and the medias inside them by date descending
+    filteredMediasByYear = _.sortBy(filteredMediasByYear, function (f) {
+        return f.year * -1;
+    });
+    _.each(filteredMediasByYear, function (f) {
+        f.medias = _.sortBy(f.medias, function (m) {
+            return moment(m.created_time, 'X').valueOf() * -1;
+        });
+    });
+
+    return filteredMediasByYear;
 }
 
 module.exports = InstagramController;

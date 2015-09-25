@@ -1,0 +1,9 @@
+[{
+    "email": "email1@email.com",
+    "dailyDigest": true,
+    "weeklyDigest": true,
+    "instagramUsers": [
+        "instagramusername1",
+        "instagramusername2"
+    ]
+}]

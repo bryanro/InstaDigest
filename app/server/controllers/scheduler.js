@@ -7,9 +7,13 @@ var config = require('../../config');
 var emailController = require('../controllers/email');
 var instagramController = require('../controllers/instagram');
 var userModel = require('../models/users');
+var recipientsModel = require('../models/recipients');
 
 var SchedulerController = {};
 
+/**
+ * Initialize the scheduler for the daily digest and the weekly digest
+ */
 SchedulerController.initializeScheduler = function () {
     var cronJob = require('cron').CronJob;
     var dailyCronDateTime = config.dailyEmailSchedule || '0 0 5 * * *'; // occur every day at 5am by default
@@ -22,8 +26,11 @@ SchedulerController.initializeScheduler = function () {
     var sendWeeklyDigest = new cronJob(weeklyCronDateTime, SchedulerController.sendWeeklyDigestEmails, null, true, 'America/New_York');
 }
 
+/**
+ * Send the daily digest email to all recipients
+ * @param callback
+ */
 SchedulerController.sendDailyDigestEmails = function (callback) {
-
     if (!callback) {
         callback = function (err) { }; // swallow callback if not present
     }
@@ -36,45 +43,64 @@ SchedulerController.sendDailyDigestEmails = function (callback) {
     var stats = {
         numEmailsSent: 0,
         numUsersProcessed: 0,
-        numErrors: 0
+        numErrors: 0,
+        numMediaFound: 0
     }
 
     var users = userModel.getUsers();
-    async.eachSeries(users, function (user, userSeriesCallback) {
-        async.waterfall([
-            function (asyncCallback) {
-                instagramController.getPicturesForUserFromMoment(user, startOfYesterday, asyncCallback);
-            },
-            function (medias, asyncCallback) {
-                if (medias.length < 1) {
-                    logger.info('no recent pictures for user ' + user.instagramUsername);
-                    stats.numUsersProcessed++;
-                    asyncCallback(null);
-                }
-                else {
-                    logger.info(medias.length + ' recent picture(s) found for user ' + user.instagramUsername);
-                    async.eachSeries(user.recipients, function (recipientEmail, recipientSeriesCallback) {
-                        stats.numEmailsSent++;
-                        emailController.sendDailyDigestEmail(user, recipientEmail, medias, recipientSeriesCallback);
-                    }, function (recipientSeriesErr) {
-                        if (recipientSeriesErr) {
-                            stats.numEmailsSent--;
-                            asyncCallback(recipientSeriesErr);
+    async.waterfall([
+        // get the media (images) for all users
+        function (asyncCallback) {
+            var medias = [];
+            async.each(users, function (user, userCallback) {
+                    instagramController.getPicturesForUserFromMoment(user, startOfYesterday, function (err, media) {
+                        if (err) {
+                            userCallback(err);
                         }
                         else {
-                            stats.numUsersProcessed++;
-                            asyncCallback(null);
+                            stats.numMediaFound += media.length;
+                            stats.numUsersProcessed += 1;
+                            if (media.length > 0) {
+                                _.each(media, function (m) {
+                                    medias.push(m);
+                                });
+                            }
+                            userCallback(null);
                         }
                     });
+                },
+                function (eachErr) {
+                    asyncCallback(eachErr, medias);
+                });
+        },
+        function (medias, asyncCallback) {
+            logger.debug('found ' + medias.length + ' total medias');
+
+            var recipients = recipientsModel.getRecipients();
+            logger.debug('recipients: ' + JSON.stringify(recipients));
+            async.eachSeries(recipients, function (recipient, recipientSeriesCallback) {
+                // filter medias to send only to the recipients' instagram users
+                var filteredMedias = _.filter(medias, function (media) {
+                    return _.indexOf(recipient.instagramUsers, media.user.username) > -1;
+                });
+
+                if (filteredMedias.length < 1) {
+                    logger.debug('no pictures to send to ' + recipient.email);
+                    recipientSeriesCallback(null);
                 }
-            }
-        ], function (asyncErr) {
-            if (asyncErr) {
-                stats.numErrors++;
-            }
-            userSeriesCallback(null);
-        });
-    }, function (userSeriesErr) {
+                else {
+                    stats.numEmailsSent++;
+                    logger.info('send email to ' + recipient.email + ' with ' + filteredMedias.length + ' pictures');
+                    emailController.sendDailyDigestEmail(recipient.email, filteredMedias, recipientSeriesCallback);
+                }
+            }, function (recipientErr) {
+                asyncCallback(recipientErr);
+            });
+        }
+    ], function (waterfallErr) {
+        if (waterfallErr) {
+            stats.numErrors++;
+        }
         logger.info('finished processing all emails:\n' + JSON.stringify(stats));
         emailController.closeSmtpTransport();
         callback(null, stats);
@@ -82,7 +108,6 @@ SchedulerController.sendDailyDigestEmails = function (callback) {
 }
 
 SchedulerController.sendWeeklyDigestEmails = function (callback) {
-
     if (!callback) {
         callback = function (err) { }; // swallow callback if not present
     }
@@ -95,53 +120,62 @@ SchedulerController.sendWeeklyDigestEmails = function (callback) {
     var stats = {
         numEmailsSent: 0,
         numUsersProcessed: 0,
-        numErrors: 0
+        numErrors: 0,
+        numMediaFound: 0
     }
 
     var users = userModel.getUsers();
-    async.eachSeries(users, function (user, userSeriesCallback) {
-        async.waterfall([
-            function (asyncCallback) {
-                instagramController.getHistoricalPicturesForWeek(user, startOfLastWeek, asyncCallback);
-            },
-            function (medias, asyncCallback) {
-                if (medias.length < 1) {
-                    logger.info('no historical pictures for user ' + user.instagramUsername);
-                    stats.numUsersProcessed++;
-                    asyncCallback(null);
+    async.waterfall([
+        function (asyncCallback) {
+            // get the media (images) for all users
+            instagramController.getHistoricalPicturesForWeekForUsers(users, startOfLastWeek, asyncCallback);
+        },
+        function (medias, asyncCallback) {
+            /*
+            // grouped by user and year
+
+                medias: [{
+                    year: 2012,
+                    instagramUsername: 'user1',
+                    medias: [{ ... }, ...]
+                }];
+
+             */
+
+            var recipients = recipientsModel.getRecipients();
+            logger.debug('recipients: ' + JSON.stringify(recipients));
+            async.eachSeries(recipients, function (recipient, recipientSeriesCallback) {
+                // filter medias to send only to the recipients' instagram users
+                var filteredMedias = _.filter(medias, function (media) {
+                    return _.indexOf(recipient.instagramUsers, media.instagramUsername) > -1;
+                });
+
+                var filteredMediasByYear = instagramController.consolidateMediaByYear(filteredMedias);
+
+                // send the email
+                if (filteredMediasByYear.length < 1) {
+                    logger.debug('no pictures to send to ' + recipient.email);
+                    recipientSeriesCallback(null);
                 }
                 else {
-                    logger.info(medias.length + ' years of pictures found for user ' + user.instagramUsername);
-                    async.eachSeries(user.recipients, function (recipientEmail, recipientSeriesCallback) {
-                        stats.numEmailsSent++;
-                        emailController.sendWeeklyDigestEmail(user, recipientEmail, medias, recipientSeriesCallback);
-                    }, function (recipientSeriesErr) {
-                        if (recipientSeriesErr) {
-                            stats.numEmailsSent--;
-                            asyncCallback(recipientSeriesErr);
-                        }
-                        else {
-                            stats.numUsersProcessed++;
-                            asyncCallback(null);
-                        }
-                    });
+                    stats.numEmailsSent++;
+                    logger.info('send weekly email to ' + recipient.email + ' with ' + filteredMediasByYear.length + ' years of pictures');
+                    emailController.sendWeeklyDigestEmail(recipient.email, filteredMediasByYear, recipientSeriesCallback);
                 }
-            }
-        ], function (asyncErr) {
-            if (asyncErr) {
-                stats.numErrors++;
-            }
-            userSeriesCallback(null);
-        });
-    }, function (userSeriesErr) {
+            }, function (recipientErr) {
+                asyncCallback(recipientErr);
+            });
+        }
+    ], function (waterfallErr) {
+        if (waterfallErr) {
+            stats.numErrors++;
+        }
         logger.info('finished processing all emails:\n' + JSON.stringify(stats));
         emailController.closeSmtpTransport();
         callback(null, stats);
-    });
-
+    })
 }
 
-// TODO: UNCOMMENT THIS
 SchedulerController.initializeScheduler();
 
 module.exports = SchedulerController;

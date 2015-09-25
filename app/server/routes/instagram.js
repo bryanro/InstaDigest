@@ -41,7 +41,7 @@ router.get('/:username/:month/:day', function (req, res, next) {
         var year = moment().year();
         var specifiedDate = moment([year, month, day]);
 
-        instagramController.getHistoricalPicturesForWeek(foundUser, specifiedDate, function (err, medias) {
+        instagramController.getHistoricalPicturesForWeekForUser(foundUser, specifiedDate, function (err, medias) {
             if (err) {
                 res.status(500).send(err);
             }

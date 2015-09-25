@@ -20,4 +20,4 @@ node_modules/
 npm-debug.log
 
 app/config.js
-app/server/config/instagramusers.json
+app/server/config/*.json

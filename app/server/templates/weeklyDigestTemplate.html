@@ -3,7 +3,7 @@
     <% _.each(medias, function (mediaForYear) { %>
         <div style="clear:left;font-size:20px;"><%=mediaForYear.year%></div>
         <div>
-        <% _.each(mediaForYear, function (media) { %>
+        <% _.each(mediaForYear.medias, function (media) { %>
             <% if (!media.caption) { media.caption = { text: '' }; } %>
             <div style="display:inline-block; vertical-align:top; width:160px; margin-bottom: 6px;">
                 <div class="image-container" style="margin: 8px auto;">
