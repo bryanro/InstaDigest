@@ -10,7 +10,7 @@ RecipientModel.getRecipients = function () {
 }
 
 RecipientModel.getRecipient = function (email) {
-    return _.findWhere(RecipientModel.getRecipients(), { recipientEmail: email });
+    return _.findWhere(RecipientModel.getRecipients(), { email: email });
 }
 
 RecipientModel.getDailyDigestRecipients = function () {
