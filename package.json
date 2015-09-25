@@ -1,6 +1,6 @@
 {
   "name": "instadigest",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Email daily digest of instagrams",
   "main": "server.js",
   "dependencies": {
