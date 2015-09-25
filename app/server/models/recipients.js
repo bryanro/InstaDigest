@@ -13,11 +13,11 @@ RecipientModel.getRecipient = function (email) {
     return _.findWhere(RecipientModel.getRecipients(), { recipientEmail: email });
 }
 
-RecipientsModel.getDailyDigestRecipients = function () {
+RecipientModel.getDailyDigestRecipients = function () {
     return _.findWhere(RecipientModel.getRecipients(), { dailyDigest: true });
 }
 
-RecipientsModel.getWeeklyDigestRecipients = function () {
+RecipientModel.getWeeklyDigestRecipients = function () {
     return _.findWhere(RecipientModel.getRecipients(), { weeklyDigest: true });
 }
 
