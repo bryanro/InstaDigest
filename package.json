@@ -19,7 +19,12 @@
     "restler": "^3.3.0",
     "winston": "^1.0.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "istanbul": "^0.3.20",
+    "mocha": "^2.3.3",
+    "mockery": "^1.4.0"
+  },
   "engines": {
     "node": ">=0.10.3 <=0.12"
   },
