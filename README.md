@@ -1,7 +1,28 @@
 InstaDigest
 ===========
 
-## Install and Setup Locally
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [About](#about)
+- [Setup and Server Configuration](#setup-and-server-configuration)
+  - [Install and Setup Locally](#install-and-setup-locally)
+  - [Install on Server to Push](#install-on-server-to-push)
+  - [Forever Setup on Server](#forever-setup-on-server)
+  - [Hooks on Server](#hooks-on-server)
+  - [Configurations](#configurations)
+  - [Gmail Issues](#gmail-issues)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## About
+
+InstaDigest is an server-side application that sends out a daily digest email (and weekly "historical" digest email) with pictures from one or more instagram users to one or more recipients.
+
+## Setup and Server Configuration
+
+### Install and Setup Locally
 
     git clone
     npm install
@@ -12,7 +33,7 @@ rename /app/server/config/instagramusers.json.template to /app/server/config/ins
 
     node server
 
-## Install on Server to Push
+### Install on Server to Push
 
     mkdir instadigest.git
     cd instadigest.git
@@ -34,7 +55,7 @@ rename /app/server/config/instagramusers.json.template to /app/server/config/ins
 
     node server
 
-## Forever Setup on Server
+### Forever Setup on Server
 
     sudo npm install -g forever
 
@@ -48,7 +69,7 @@ start the app with:
             -e ~/logs/instadigest/err.log \
             ~/instadigest/server.js
 
-## Hooks on Server
+### Hooks on Server
 
     cd ~/instadigest/hooks
     touch post-receive
@@ -81,7 +102,15 @@ paste the following to the post-receive file and save it:
             --sourceDir ~/instadigest \
             server.js
 
-## Gmail Issues
+### Configurations
+
+The following configuration files need to be setup after the application is pushed to the server by renaming the *.template files:
+
+- app/config.js
+- app/server/config/instagramusers.json
+- app/server/config/recipients.json
+
+### Gmail Issues
 
 If you are a login failure (response code 534) and you've verified your username and password are correct, google may be blocking the request from the new source. To resolve, login to the gmail account and go into the email that says they have blocked the request, then mark that as a known device. Restart the server and it should send emails successfully after that.
 
