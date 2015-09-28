@@ -118,3 +118,53 @@ Other things that may be required while logged into the gmail account:
 
 1. [https://www.google.com/settings/security/lesssecureapps](https://www.google.com/settings/security/lesssecureapps)
 2. [http://www.google.com/accounts/DisplayUnlockCaptcha](http://www.google.com/accounts/DisplayUnlockCaptcha)
+
+## Tests and Code Coverage
+
+### Prerequisites
+
+Install mocha and instanbul 
+
+    npm install -g mocha
+    npm install -g istanbul
+
+### Executing the Tests
+
+From the instadigest root, execute the following in the terminal:
+
+    mocha
+    
+You should see output similar to the following:
+
+    $ mocha
+    
+      Models
+        Users Model
+          positive tests
+            ✓ should return all instagram users from getUsers
+            ✓ should return the instagram user searched for using getUser
+          negative tests
+    WARNING: Replacing existing mock for module: ../config/instagramusers.json
+            ✓ should return an empty array from getUsers when there are no users
+            ✓ should return undefined for a user that does not exist from getUser
+        Recipients Model
+          positive tests
+            ✓ should return all recipients from getRecipients
+            ✓ should return all daily digest recipients from getDailyDigestRecipients
+            ✓ should return all weekly digest recipients from getWeeklyDigestRecipients
+            ✓ should return the recipient searched for using getRecipient
+          negative tests
+    WARNING: Replacing existing mock for module: ../config/recipients.json
+            ✓ should return an empty array from getRecipients with no recipients
+            ✓ should return an empty array from getDailyDigestRecipients with no recipients
+            ✓ should return an empty array from getWeeklyDigestRecipients with no recipients
+            ✓ should return an undefined object when searching for a user that does not exist using getRecipient
+            
+      12 passing (87ms)
+
+### Code Coverage
+
+Code Coverage can be run either by executing the codecoverage.sh bash script, or by executing the following lines in terminal from the instadigest root:
+
+    istanbul cover _mocha -- -R spec
+    open coverage/lcov-report/index.html

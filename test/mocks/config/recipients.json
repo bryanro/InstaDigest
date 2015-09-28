@@ -1,0 +1,49 @@
+[{
+  "email": "email1@email.com",
+  "dailyDigest": true,
+  "weeklyDigest": true,
+  "instagramUsers": [
+    "insta1"
+  ]
+}, {
+  "email": "email2@email.com",
+  "dailyDigest": true,
+  "weeklyDigest": true,
+  "instagramUsers": [
+    "insta1",
+    "insta2"
+  ]
+}, {
+  "email": "email3@email.com",
+  "dailyDigest": false,
+  "weeklyDigest": true,
+  "instagramUsers": [
+    "insta1",
+    "insta2",
+    "insta3"
+  ]
+}, {
+  "email": "email4@email.com",
+  "dailyDigest": true,
+  "weeklyDigest": false,
+  "instagramUsers": [
+    "insta1",
+    "insta2"
+  ]
+}, {
+  "email": "email5@email.com",
+  "dailyDigest": false,
+  "weeklyDigest": false,
+  "instagramUsers": [
+    "insta1",
+    "insta2"
+  ]
+}, {
+  "email": "email6@email.com",
+  "dailyDigest": true,
+  "weeklyDigest": false,
+  "instagramUsers": [
+    "insta1",
+    "insta2"
+  ]
+}]

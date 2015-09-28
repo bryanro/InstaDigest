@@ -19,5 +19,7 @@ upload/
 node_modules/
 npm-debug.log
 
+coverage/
+
 app/config.js
 app/server/config/*.json

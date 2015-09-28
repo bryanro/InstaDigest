@@ -1,0 +1,9 @@
+[{
+  "instagramUsername": "instagram",
+  "fullName": "instagram",
+  "instagramOauthToken": "1234567890"
+}, {
+  "instagramUsername": "instagram2",
+  "fullName": "instagram 2",
+  "instagramOauthToken": "0987654321"
+}]
