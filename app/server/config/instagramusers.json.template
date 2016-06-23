@@ -1,6 +1,6 @@
 [{
-  instagramUsername: "instagramusername",
-  instagramId: "000000000",
-  fullName: "My Full Name",
-  instagramOauthToken: "##################################"
+  "instagramUsername": "instagramusername",
+  "instagramId": "000000000",
+  "fullName": "My Full Name",
+  "instagramOauthToken": "##################################"
 }]
