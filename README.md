@@ -168,3 +168,17 @@ Code Coverage can be run either by executing the codecoverage.sh bash script, or
 
     istanbul cover _mocha -- -R spec
     open coverage/lcov-report/index.html
+
+## Instagram Access Token
+
+### Instagram Developer Setup
+
+1. Create a new Client
+2. Add `http://localhost` to the valid URI redirects list
+3. Make sure `Disable implicit OAuth` is unchecked
+
+### User
+
+1. Login to Instagram as the user
+2. Navigate to `https://instagram.com/oauth/authorize/?client_id=[CLIENT_ID_HERE]&redirect_uri=http://localhost&response_type=token`, replacing the `[CLIENT_ID_HERE]`
+3. Get the access token from the url
